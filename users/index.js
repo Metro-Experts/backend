@@ -13,10 +13,7 @@ const port = process.env.PORT || 3001;
 app.use(cors());
 
 // Conectar a MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-})
+mongoose.connect(process.env.MONGODB_URI)
     .then(() => console.log('Connected to MongoDB'))
     .catch((error) => console.error('Error connecting to MongoDB:', error));
 
@@ -29,6 +26,12 @@ app.use('/users', userRoutes);
 app.get('/holaa', (req, res) => {
     res.send('Hello, World!');
 });
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
+
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
