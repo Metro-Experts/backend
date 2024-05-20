@@ -1,34 +1,37 @@
-import express from "express";
-import  { createProxyMiddleware } from "http-proxy-middleware"
+import express from 'express';
+import { createProxyMiddleware } from 'http-proxy-middleware';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 
+const userEndpoints = process.env.USER || 'http://localhost:3001/users';
+const serviceBEndpoints = process.env.SERVICEB || 'http://localhost:3002';
 
 app.use(
-  "/auth",
-  createProxyMiddleware({
-    target: "http://localhost:3001",
-    changeOrigin: true,
-    pathRewrite: {
-      "^/serviceA": "",
-    },
-  })
+    '/users',
+    createProxyMiddleware({
+        target: userEndpoints,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/users': '',
+        },
+    })
 );
-
 
 app.use(
-  "/serviceB",
-  createProxyMiddleware({
-    target: "http://localhost:3002",
-    changeOrigin: true,
-    pathRewrite: {
-      "^/serviceB": "",
-    },
-  })
+    '/serviceB',
+    createProxyMiddleware({
+        target: serviceBEndpoints,
+        changeOrigin: true,
+        pathRewrite: {
+            '^/serviceB': '',
+        },
+    })
 );
 
-// Puerto en el que el API Gateway escuchará
 const PORT = 3000;
 app.listen(PORT, () => {
-  console.log(`API Gateway corriendo en el puerto ${PORT}`);
+    console.log(`API Gateway running on port ${PORT}`);
 });
