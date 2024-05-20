@@ -10,6 +10,6 @@ const userSchema = new mongoose.Schema({
     ratingCount: { type: Number, default: 0 },
 });
 
-const User = mongoose.model('User', userSchema);
+const User = mongoose.model('usuario', userSchema);
 
 export default User;
