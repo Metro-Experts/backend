@@ -23,7 +23,7 @@ app.use(
 app.use(
     '/courses',
     createProxyMiddleware({
-        target: serviceBEndpoints,
+        target: courseEndpoints,
         changeOrigin: true,
         pathRewrite: {
             '^/courses': '',
