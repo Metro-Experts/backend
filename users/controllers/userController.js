@@ -38,3 +38,18 @@ export const createUser = async (req, res) => {
         res.status(500).send(error.message);
     }
 };
+
+export const getUsersByIds = async (req, res) => {
+    const { ids } = req.body;
+
+    if (!Array.isArray(ids) || ids.length === 0) {
+        return res.status(400).send('Invalid input: Expected an array of user IDs');
+    }
+
+    try {
+        const users = await User.find({ _id: { $in: ids } });
+        res.json(users);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
