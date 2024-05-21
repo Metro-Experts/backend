@@ -7,7 +7,7 @@ dotenv.config();
 const app = express();
 
 const userEndpoints = process.env.USER || 'http://localhost:3001/users';
-const serviceBEndpoints = process.env.SERVICEB || 'http://localhost:3002';
+const serviceBEndpoints = process.env.SERVICEB || 'http://localhost:3002/courses';
 
 app.use(
     '/users',
@@ -21,12 +21,12 @@ app.use(
 );
 
 app.use(
-    '/serviceB',
+    '/courses',
     createProxyMiddleware({
         target: serviceBEndpoints,
         changeOrigin: true,
         pathRewrite: {
-            '^/serviceB': '',
+            '^/courses': '',
         },
     })
 );
