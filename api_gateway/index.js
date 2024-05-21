@@ -7,7 +7,7 @@ dotenv.config();
 const app = express();
 
 const userEndpoints = process.env.USER || 'http://localhost:3001/users';
-const serviceBEndpoints = process.env.SERVICEB || 'http://localhost:3002/courses';
+const courseEndpoints = process.env.COURSE || 'http://localhost:3002/courses';
 
 app.use(
     '/users',
