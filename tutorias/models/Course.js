@@ -9,10 +9,10 @@ const courseSchema = new mongoose.Schema({
     rating: { type: Number, required: true, min: 0, max: 5 },
     id: { type: String, required: true },
   },
-  fechas: [
+  date: [
     {
-      dia: { type: String, required: true },
-      hora: { type: String, required: true },
+      day: { type: String, required: true },
+      hour: { type: String, required: true },
     },
   ],
   students: [{ type: String, default: [] }],

@@ -9,11 +9,11 @@ const courseSchema = Joi.object({
     rating: Joi.number().min(0).max(5).required(),
     id: Joi.string().required(),
   }).required(),
-  fechas: Joi.array()
+  date: Joi.array()
     .items(
       Joi.object({
         dia: Joi.string().required(),
-        hora: Joi.string().required(),
+        hour: Joi.string().required(),
       })
     )
     .required(),
