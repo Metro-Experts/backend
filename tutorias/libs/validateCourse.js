@@ -12,7 +12,7 @@ const courseSchema = Joi.object({
   date: Joi.array()
     .items(
       Joi.object({
-        dia: Joi.string().required(),
+        day: Joi.string().required(),
         hour: Joi.string().required(),
       })
     )
