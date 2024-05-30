@@ -17,6 +17,7 @@ const courseSchema = new mongoose.Schema({
   ],
   students: [{ type: String, default: [] }],
   price: { type: Number, required: true, min: 0 },
+  modality: { type: String, required: true },
 });
 
 const Course = mongoose.model("materia", courseSchema);

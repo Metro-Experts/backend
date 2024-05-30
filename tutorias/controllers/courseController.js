@@ -55,3 +55,22 @@ export const getAllCourses = async (req, res) => {
         res.status(500).send(error.message);
     }
 };
+
+export const addStudentToCourse = async (req, res) => {
+    const { studentId } = req.body;
+
+    if (!studentId) {
+        return res.status(400).send('Student ID is required');
+    }
+
+    try {
+        const course = await Course.findById(req.params.id);
+        if (!course) return res.status(404).send('Course not found');
+
+        course.students.push(studentId);
+        const updatedCourse = await course.save();
+        res.json(updatedCourse);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
