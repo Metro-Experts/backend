@@ -6,7 +6,8 @@ const userSchema = new mongoose.Schema({
     email: String,
     lastName: String,
     userType: String,
-    courses: [String],
+    courses_student: [String],
+    courses_tutor: [String],
     rating: { type: Number, default: 0 },
     ratingCount: { type: Number, default: 0 },
 });

@@ -53,3 +53,42 @@ export const getUsersByIds = async (req, res) => {
         res.status(500).send(error.message);
     }
 };
+
+export const addCourseToStudent = async (req, res) => {
+    const { courseId } = req.body;
+
+    if (!courseId) {
+        return res.status(400).send('Course ID is required');
+    }
+
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).send('User not found');
+
+        user.courses_student.push(courseId);
+        const updatedUser = await user.save();
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
+
+
+export const addCourseToTutor = async (req, res) => {
+    const { courseId } = req.body;
+
+    if (!courseId) {
+        return res.status(400).send('Course ID is required');
+    }
+
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).send('User not found');
+
+        user.courses_tutor.push(courseId);
+        const updatedUser = await user.save();
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
