@@ -1,7 +1,7 @@
 import express from 'express';
 import {
     addCourseToStudent, addCourseToTutor,
-    createUser,
+    createUser, deleteCourseFromStudent, deleteCourseFromTutor,
     getUserById,
     getUsersByIds,
     updateUserById
@@ -15,6 +15,8 @@ router.post('/', createUser);
 router.post('/getUsersByIds', getUsersByIds);
 router.post('/:id/add-course-student', addCourseToStudent);
 router.post('/:id/add-course-tutor', addCourseToTutor);
+router.delete('/:id/delete-course-tutor', deleteCourseFromTutor);
+router.delete('/:id/delete-course-student', deleteCourseFromStudent);
 router.get('/', (req, res) => {
     res.send('Hello from users');
 });

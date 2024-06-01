@@ -92,3 +92,42 @@ export const addCourseToTutor = async (req, res) => {
         res.status(500).send(error.message);
     }
 };
+
+export const deleteCourseFromStudent = async (req, res) => {
+    const { courseId } = req.body;
+
+    if (!courseId) {
+        return res.status(400).send('Course ID is required');
+    }
+
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).send('User not found');
+
+        user.courses_student = user.courses_student.filter(course => course !== courseId);
+        const updatedUser = await user.save();
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
+
+
+export const deleteCourseFromTutor = async (req, res) => {
+    const { courseId } = req.body;
+
+    if (!courseId) {
+        return res.status(400).send('Course ID is required');
+    }
+
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).send('User not found');
+
+        user.courses_tutor = user.courses_tutor.filter(course => course !== courseId);
+        const updatedUser = await user.save();
+        res.json(updatedUser);
+    } catch (error) {
+        res.status(500).send(error.message);
+    }
+};
