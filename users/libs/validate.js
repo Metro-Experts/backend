@@ -8,8 +8,8 @@ const userSchema = Joi.object({
   userType: Joi.string().valid("student", "tutor").required(),
   courses_student: Joi.array().items(Joi.string()),
   courses_tutor: Joi.array().items(Joi.string()),
-  rating: Joi.number().min(0).max(5).required(),
-  ratingCount: Joi.number().min(0).required(),
+  rating: Joi.number().min(0).max(5),
+  ratingCount: Joi.number().min(0),
   gender: Joi.string().valid("M", "F").required(),
 });
 
