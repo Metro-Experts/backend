@@ -22,8 +22,8 @@ export const createCourse = async (req, res) => {
   }
 
   try {
-    const studentExists = consultarId(req.body.tutor.id);
-
+    const studentExists = await consultarId(req.body.tutor.id);
+    console.log(studentExists);
     if (!studentExists) {
       return res.status(404).send("Tutor not found");
     }
@@ -74,7 +74,7 @@ export const addStudentToCourse = async (req, res) => {
   }
 
   try {
-    const studentExists = consultarId(studentId);
+    const studentExists = await consultarId(studentId);
     if (!studentExists) {
       return res.status(404).send("Student not found");
     }
