@@ -22,11 +22,16 @@ export const createCourse = async (req, res) => {
   }
 
   try {
+    const studentExists = consultarId(req.body.tutor.id);
+
+    if (!studentExists) {
+      return res.status(404).send("Tutor not found");
+    }
     const newCourse = new Course(req.body);
     const savedCourse = await newCourse.save();
     console.log(savedCourse.tutor.id);
     console.log(savedCourse._id.toString());
-    callApi(savedCourse.tutor.id, savedCourse._id.toString());
+    addTutor(savedCourse.tutor.id, savedCourse._id.toString());
     res.status(201).json(savedCourse);
   } catch (error) {
     res.status(500).send(error.message);
@@ -69,6 +74,16 @@ export const addStudentToCourse = async (req, res) => {
   }
 
   try {
+    const studentExists = consultarId(studentId);
+    if (!studentExists) {
+      return res.status(404).send("Student not found");
+    }
+
+    const addStudentResult = await addStudent(studentId, req.params.id);
+    if (addStudentResult === "Estudiante no encontrado") {
+      return res.status(404).send("Student not found");
+    }
+
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).send("Course not found");
 
@@ -79,8 +94,7 @@ export const addStudentToCourse = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
-
-const callApi = async (id, idTuror) => {
+const addTutor = async (id, idTuror) => {
   const url2 = `http://localhost:3001/users/${id}/add-course-tutor `;
   const url = `https://uniexpert-gateway-6569fdd60e75.herokuapp.com/users/${id}/add-course-tutor `;
   const body = {
@@ -98,14 +112,67 @@ const callApi = async (id, idTuror) => {
     });
 
     if (!response.ok) {
-      const errorBody = await response.text(); // o response.json() si esperas JSON
+      const errorBody = await response.text();
       console.log(errorBody);
-      throw new Error(` ${errorBody}`);
+      response.status(500).send(errorBody);
     }
 
     const data = await response.json();
     console.log(data);
   } catch (error) {
     console.error("An error occurred:", error);
+  }
+};
+const addStudent = async (id, idTuror) => {
+  const url2 = `http://localhost:3001/users/${id}/add-course-student `;
+  const url = `https://uniexpert-gateway-6569fdd60e75.herokuapp.com/users/${id}/add-course-student `;
+  const body = {
+    courseId: idTuror,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.log(errorBody);
+      throw new Error("Estudiante no encontrado");
+    }
+
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return "Estudiante no encontrado";
+  }
+};
+
+const consultarId = async (id) => {
+  const url = `https://uniexpert-gateway-6569fdd60e75.herokuapp.com/users/${id}`;
+
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      const text = await response.text();
+      if (text === "User not found") {
+        console.log("Estudiante no encontrado");
+        return false;
+      }
+      console.log(text);
+      return false;
+    }
+
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.log("An error occurred:", error);
+    return false;
   }
 };
