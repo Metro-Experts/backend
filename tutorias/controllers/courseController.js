@@ -79,14 +79,13 @@ export const addStudentToCourse = async (req, res) => {
       return res.status(404).send("Student not found");
     }
 
-    const addStudentResult = await addStudent(studentId, req.params.id);
     if (addStudentResult === "Estudiante no encontrado") {
       return res.status(404).send("Student not found");
     }
 
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).send("Course not found");
-
+    const addStudentResult = await addStudent(studentId, req.params.id);
     course.students.push(studentId);
     const updatedCourse = await course.save();
     res.json(updatedCourse);
