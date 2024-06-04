@@ -1,6 +1,6 @@
 # Metro-Experts Backend
 
-Este proyecto está diseñado utilizando microservicios. 
+Este proyecto está diseñado utilizando la arquitectura de microservios, donde tendremos un API gateway para interactuar con las demas aplicaciones
 
 ## 🗂️ Estructura del Proyecto
 - **🔗 api_gateway**: Este microservicio se conecta con las demás aplicaciones.
@@ -11,11 +11,14 @@ Este proyecto está diseñado utilizando microservicios.
 ## 🚀 Instrucciones para Ejecutar el Proyecto
 Para correr el proyecto, sigue estos pasos:
 1. Ingresa a cada una de las carpetas:
+   ```bash
+   cd
+    ```
     - `api_gateway`
     - `users`
     - `tutorias`
     - `subjects`
-2. Ejecuta el siguiente comando en cada carpeta:
+3. Ejecuta el siguiente comando en cada carpeta:
     ```bash
     npm install
     ```
