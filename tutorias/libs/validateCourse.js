@@ -18,9 +18,9 @@ const courseSchema = Joi.object({
     )
     .required(),
   price: Joi.number().min(0).required(),
-    modality: Joi.string().required(),
+  modality: Joi.string().required(),
   students: Joi.array().items(Joi.string()),
-
+  category: Joi.string(),
 });
 
 export default courseSchema;
