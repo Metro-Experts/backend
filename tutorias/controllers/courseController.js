@@ -174,3 +174,55 @@ const consultarId = async (id) => {
     return false;
   }
 };
+
+export const removeStudentFromCourse = async (req, res) => {
+  const { studentId } = req.body;
+
+  if (!studentId) {
+    return res.status(400).send("Student ID is required");
+  }
+
+  try {
+    const course = await Course.findById(req.params.id);
+    if (!course) return res.status(404).send("Course not found");
+
+    const removeStudentResult = await removeStudent(studentId, req.params.id);
+    if (removeStudentResult === "Estudiante no encontrado") {
+      return res.status(404).send("Student not found");
+    }
+
+    course.students = course.students.filter((id) => id !== studentId);
+    const updatedCourse = await course.save();
+    res.json(updatedCourse);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
+
+const removeStudent = async (id, courseId) => {
+  const url = `https://uniexpert-gateway-6569fdd60e75.herokuapp.com/users/${id}/delete-course-student`;
+  const body = { courseId };
+
+  try {
+    const response = await fetch(url, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.log(errorBody);
+      throw new Error("Estudiante no encontrado");
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return "Estudiante no encontrado";
+  }
+};
