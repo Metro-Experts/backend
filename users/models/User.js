@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
   gender: String,
   lastName: String,
   userType: String,
+  cellphone: String,
   courses_student: [String],
   courses_tutor: [String],
   rating: { type: Number, default: 0 },

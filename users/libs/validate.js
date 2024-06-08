@@ -10,6 +10,7 @@ const userSchema = Joi.object({
   _id: Joi.string().required(),
   name: Joi.string().required(),
   email: Joi.string().email().required(),
+  cellphone: Joi.string().required(),
   lastName: Joi.string().required(),
   userType: Joi.string().valid("student", "tutor").required(),
   courses_student: Joi.array().items(Joi.string()),
