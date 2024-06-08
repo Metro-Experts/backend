@@ -5,6 +5,7 @@ import {
   getCourseById,
   updateCourseById,
   addStudentToCourse,
+  removeStudentFromCourse,
 } from "../controllers/courseController.js";
 
 const router = express.Router();
