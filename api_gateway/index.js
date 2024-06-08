@@ -10,8 +10,9 @@ const userEndpoints = process.env.USER || "http://localhost:3001/users";
 const courseEndpoints = process.env.COURSE || "http://localhost:3002/courses";
 const subjectsEndpoints =
   process.env.SUBJECT || "http://localhost:3003/subjects";
-console.log(userEndpoints);
-console.log(courseEndpoints);
+
+const paymentsEndpoints = process.env.PAYMENT || "http://localhost:3003/images";
+console.log(paymentsEndpoints);
 app.use(
   "/users",
   createProxyMiddleware({
@@ -41,6 +42,17 @@ app.use(
     changeOrigin: true,
     pathRewrite: {
       "^/subjects": "",
+    },
+  })
+);
+
+app.use(
+  "/images",
+  createProxyMiddleware({
+    target: paymentsEndpoints,
+    changeOrigin: true,
+    pathRewrite: {
+      "^/images": "",
     },
   })
 );

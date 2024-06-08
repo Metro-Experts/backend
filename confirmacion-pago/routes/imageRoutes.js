@@ -53,6 +53,14 @@ router.get("/:id", async (req, res) => {
   }
 });
 
+router.get("/", async (req, res) => {
+  try {
+    res.send("hola");
+  } catch (error) {
+    res.status(500).send("Error al obtener los datos");
+  }
+});
+
 // Endpoint para verificar la conexión
 router.get("/check/connection", (req, res) => {
   res.status(200).send("Connection is successful");

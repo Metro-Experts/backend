@@ -26,7 +26,7 @@ app.use(bodyParser.json());
 app.use("/images", imageRoutes);
 
 app.get("/", (req, res) => {
-  res.send("Confirmaciones");
+  res.send("Confirmacionesaa");
 });
 
 app.use((err, req, res, next) => {
