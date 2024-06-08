@@ -11,6 +11,11 @@ const userSchema = new mongoose.Schema({
   courses_tutor: [String],
   rating: { type: Number, default: 0 },
   ratingCount: { type: Number, default: 0 },
+  bankaccount: {
+    cedula: { type: String, default: 0 },
+    numcell: { type: String, default: "0" },
+    bank: { type: String, default: "mercantil" },
+  },
 });
 
 const User = mongoose.model("usuario", userSchema);
