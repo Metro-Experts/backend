@@ -1,5 +1,11 @@
 import Joi from "joi";
 
+const bankAccountSchema = Joi.object({
+  cedula: Joi.string().required(),
+  numcell: Joi.string().required(),
+  bank: Joi.string().required(),
+});
+
 const courseSchema = Joi.object({
   name: Joi.string().required(),
   description: Joi.string().required(),
@@ -8,6 +14,7 @@ const courseSchema = Joi.object({
     lastName: Joi.string().required(),
     rating: Joi.number().min(0).max(5).required(),
     id: Joi.string().required(),
+    bankaccount: bankAccountSchema,
   }).required(),
   date: Joi.array()
     .items(
