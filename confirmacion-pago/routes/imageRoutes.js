@@ -101,4 +101,40 @@ router.post("/confirm/:id", async (req, res) => {
   }
 });
 
+
+
+
+router.get("/tutor/:idtutor", async (req, res) => {
+  try {
+    const paymentConfirmations = await PaymentConfirmation.find({ idtutor: req.params.idtutor });
+
+    // Convertir los datos de la imagen a base64
+    const confirmationsWithBase64 = paymentConfirmations.map((confirmation) => {
+      return {
+        ...confirmation._doc,
+        img: {
+          ...confirmation.img,
+          data: confirmation.img.data.toString('base64')
+        }
+      };
+    });
+
+    res.status(200).json(confirmationsWithBase64);
+  } catch (error) {
+    res.status(500).send("Error al obtener los datos por idtutor");
+  }
+});
+// Endpoint para obtener documentos por idcurso
+router.get("/curso/:idcurso", async (req, res) => {
+  try {
+    const paymentConfirmations = await PaymentConfirmation.find({ idcurso: req.params.idcurso });
+    res.status(200).json(paymentConfirmations);
+  } catch (error) {
+    res.status(500).send("Error al obtener los datos por idcurso");
+  }
+});
+
+
+
+
 export default router;

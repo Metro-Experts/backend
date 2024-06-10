@@ -12,7 +12,8 @@ const subjectsEndpoints =
   process.env.SUBJECT || "http://localhost:3003/subjects";
 
 const paymentsEndpoints = process.env.PAYMENT || "http://localhost:3003/images";
-console.log(paymentsEndpoints);
+const conversionMonetaria = process.env.DOLAR || "http://localhost:3004/dolar";
+
 app.use(
   "/users",
   createProxyMiddleware({
@@ -53,6 +54,17 @@ app.use(
     changeOrigin: true,
     pathRewrite: {
       "^/images": "",
+    },
+  })
+);
+
+app.use(
+  "/dolar",
+  createProxyMiddleware({
+    target: conversionMonetaria,
+    changeOrigin: true,
+    pathRewrite: {
+      "^/dolar": "",
     },
   })
 );
