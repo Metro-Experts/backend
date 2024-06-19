@@ -26,6 +26,7 @@ const courseSchema = new mongoose.Schema({
   category: { type: String, default: "NA" },
   inicio: { type: String, required: true },
   final: { type: String, required: true },
+  calendario: [{ type: String }],
 });
 
 const Course = mongoose.model("materia", courseSchema);

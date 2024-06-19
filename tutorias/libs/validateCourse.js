@@ -30,6 +30,7 @@ const courseSchema = Joi.object({
   category: Joi.string(),
   inicio: Joi.string().required(),
   final: Joi.string().required(),
+  calendario: Joi.array().items(Joi.string()),
 });
 
 export default courseSchema;

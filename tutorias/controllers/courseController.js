@@ -1,7 +1,34 @@
 import Course from "../models/Course.js";
 import courseSchema from "../libs/validateCourse.js";
 import dotenv from "dotenv";
+import moment from "moment";
 dotenv.config();
+
+const generateDates = (startMonth, endMonth, daysOfWeek) => {
+  const dates = [];
+  let startDate = moment(startMonth, "MMMM");
+  let endDate = moment(endMonth, "MMMM").endOf("month");
+
+  // Iterar sobre los meses y días de la semana para generar las fechas
+  while (startDate.isBefore(endDate)) {
+    daysOfWeek.forEach((day) => {
+      let current = startDate.clone().day(day);
+      if (current.isBefore(startDate)) {
+        current.add(7, "days");
+      }
+      while (current.isBefore(startDate.clone().add(1, "month"))) {
+        if (current.isBetween(startDate, endDate, null, "[]")) {
+          dates.push(current.format("YYYY-MM-DD"));
+        }
+        current.add(1, "week");
+      }
+    });
+    startDate.add(1, "month");
+  }
+
+  return dates;
+};
+
 // Obtener un curso por ID
 export const getCourseById = async (req, res) => {
   try {
@@ -27,7 +54,19 @@ export const createCourse = async (req, res) => {
     if (!studentExists) {
       return res.status(404).send("Tutor not found");
     }
-    const newCourse = new Course(req.body);
+
+    // Generar el calendario de fechas
+    const daysOfWeek = req.body.date.map((d) => d.day); // Asume que "day" tiene nombres de días como "Monday", "Tuesday", etc.
+    const calendario = generateDates(
+      req.body.inicio,
+      req.body.final,
+      daysOfWeek
+    );
+
+    // Agregar el calendario al cuerpo de la solicitud
+    const newCourseData = { ...req.body, calendario };
+
+    const newCourse = new Course(newCourseData);
     const savedCourse = await newCourse.save();
     console.log(savedCourse.tutor.id);
     console.log(savedCourse._id.toString());
