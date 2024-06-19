@@ -28,6 +28,8 @@ const courseSchema = Joi.object({
   modality: Joi.string().required(),
   students: Joi.array().items(Joi.string()),
   category: Joi.string(),
+  inicio: Joi.string().required(),
+  final: Joi.string().required(),
 });
 
 export default courseSchema;

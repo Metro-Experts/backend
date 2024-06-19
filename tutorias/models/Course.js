@@ -8,7 +8,6 @@ const courseSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     rating: { type: Number, required: true, min: 0, max: 5 },
     id: { type: String, required: true },
-
     bankaccount: {
       cedula: { type: String, default: 0 },
       numcell: { type: String, default: "0" },
@@ -25,6 +24,8 @@ const courseSchema = new mongoose.Schema({
   price: { type: Number, required: true, min: 0 },
   modality: { type: String, required: true },
   category: { type: String, default: "NA" },
+  inicio: { type: String, required: true },
+  final: { type: String, required: true },
 });
 
 const Course = mongoose.model("materia", courseSchema);
