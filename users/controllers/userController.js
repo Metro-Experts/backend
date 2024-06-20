@@ -43,6 +43,45 @@ export const createUser = async (req, res) => {
   }
 };
 
+export const addPendingItem = async (req, res) => {
+  const { id } = req.params;
+  const { item } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $push: { pending: item } },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+// Controlador para quitar un elemento del array "pending"
+export const removePendingItem = async (req, res) => {
+  const { id } = req.params;
+  const { item } = req.body;
+
+  try {
+    const user = await User.findByIdAndUpdate(
+      id,
+      { $pull: { pending: item } },
+      { new: true }
+    );
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
 export const getUsersByIds = async (req, res) => {
   const { ids } = req.body;
 

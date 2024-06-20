@@ -19,6 +19,7 @@ const userSchema = Joi.object({
   ratingCount: Joi.number().min(0),
   gender: Joi.string().valid("M", "F").required(),
   bankaccount: bankAccountSchema,
+  pending: Joi.array().items(Joi.string()),
 });
 
 export default userSchema;

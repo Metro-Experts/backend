@@ -17,6 +17,7 @@ const userSchema = new mongoose.Schema({
     numcell: { type: String, default: "0" },
     bank: { type: String, default: "mercantil" },
   },
+  pending: [String, { default: [] }],
 });
 
 const User = mongoose.model("usuario", userSchema);

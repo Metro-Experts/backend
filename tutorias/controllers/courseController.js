@@ -29,6 +29,22 @@ const generateDates = (startMonth, endMonth, daysOfWeek) => {
   return dates;
 };
 
+export const getCoursesByIds = async (req, res) => {
+  const { ids } = req.body;
+
+  if (!Array.isArray(ids) || ids.length === 0) {
+    return res.status(400).send("IDs array is required");
+  }
+
+  // Validar los IDs
+
+  try {
+    const courses = await Course.find({ _id: { $in: ids } });
+    res.json(courses);
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};
 // Obtener un curso por ID
 export const getCourseById = async (req, res) => {
   try {
@@ -132,7 +148,6 @@ export const addStudentToCourse = async (req, res) => {
   }
 };
 const addTutor = async (id, idTuror) => {
-  const url2 = `http://localhost:3001/users/${id}/add-course-tutor `;
   const url = `https://uniexpert-gateway-6569fdd60e75.herokuapp.com/users/${id}/add-course-tutor `;
   const body = {
     courseId: idTuror,
@@ -161,7 +176,6 @@ const addTutor = async (id, idTuror) => {
   }
 };
 const addStudent = async (id, idTuror) => {
-  const url2 = `http://localhost:3001/users/${id}/add-course-student `;
   const url = `https://uniexpert-gateway-6569fdd60e75.herokuapp.com/users/${id}/add-course-student `;
   const body = {
     courseId: idTuror,
