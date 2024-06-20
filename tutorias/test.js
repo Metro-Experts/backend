@@ -1,4 +1,6 @@
 import moment from "moment";
+import "moment/locale/es.js"; // Importa explícitamente el archivo es.js
+moment.locale("es");
 
 // Función para generar las fechas en el rango especificado
 const generateDates = (startMonth, endMonth, daysOfWeek) => {
@@ -27,9 +29,14 @@ const generateDates = (startMonth, endMonth, daysOfWeek) => {
 };
 
 // Prueba de la función
-const startMonth = "january"; // January
-const endMonth = "june"; // June
-const daysOfWeek = ["Monday", "Wednesday"]; // Example days
+const startMonth = "Febrero"; // February
+const endMonth = "Marzo"; // March
+const daysOfWeekInSpanish = ["Lunes", "Miércoles", "Viernes"];
 
-const dates = generateDates(startMonth, endMonth, daysOfWeek);
+// Convertir los días de la semana a inglés
+const daysOfWeekInEnglish = daysOfWeekInSpanish.map((day) =>
+  moment().day(day).format("dddd")
+);
+
+const dates = generateDates(startMonth, endMonth, daysOfWeekInEnglish);
 console.log(dates);

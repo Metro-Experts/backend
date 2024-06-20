@@ -11,13 +11,45 @@ const router = express.Router();
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+const addPending = async (id, idCurso) => {
+  const url = `https://uniexpert-gateway-6569fdd60e75.herokuapp.com/users/${id}/add-pending `;
+  const body = {
+    item: idCurso,
+  };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.log(errorBody);
+      throw new Error("Estudiante no encontrado");
+    }
+
+    const data = await response.json();
+    console.log(data);
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return "Estudiante no encontrado";
+  }
+};
+
 // Endpoint para subir la imagen y datos
 router.post("/upload", upload.single("image"), async (req, res) => {
-  const { idcurso, idtutor, estudiante } = req.body;
+  const { idcurso, idtutor, estudiante, nombreTutoria } = req.body;
+  console.log(req.body);
+  const estudiante1 = JSON.parse(estudiante);
 
   const newPaymentConfirmation = new PaymentConfirmation({
     idcurso,
     idtutor,
+    nombreTutoria,
     estudiante: JSON.parse(estudiante),
     img: {
       data: req.file.buffer,
@@ -28,11 +60,14 @@ router.post("/upload", upload.single("image"), async (req, res) => {
 
   try {
     await newPaymentConfirmation.save();
+    addPending(estudiante1.idstudiante, idcurso);
+    console.log("Datos y comprobante subidos y guardados en la base de datos");
     res.status(201).send({
       message: "Datos y comprobante subidos y guardados en la base de datos",
       id: newPaymentConfirmation._id,
     });
   } catch (error) {
+    /* console.log(error); */
     res.status(500).send("Error al guardar los datos y la imagen");
   }
 });
@@ -67,7 +102,7 @@ router.get("/check/connection", (req, res) => {
 });
 
 // Endpoint para confirmar el pago y añadir al estudiante al curso
-router.post("/confirm/:id", async (req, res) => {
+router.get("/confirm/:id", async (req, res) => {
   try {
     const paymentConfirmation = await PaymentConfirmation.findById(
       req.params.id
@@ -101,12 +136,11 @@ router.post("/confirm/:id", async (req, res) => {
   }
 });
 
-
-
-
 router.get("/tutor/:idtutor", async (req, res) => {
   try {
-    const paymentConfirmations = await PaymentConfirmation.find({ idtutor: req.params.idtutor });
+    const paymentConfirmations = await PaymentConfirmation.find({
+      idtutor: req.params.idtutor,
+    });
 
     // Convertir los datos de la imagen a base64
     const confirmationsWithBase64 = paymentConfirmations.map((confirmation) => {
@@ -114,8 +148,8 @@ router.get("/tutor/:idtutor", async (req, res) => {
         ...confirmation._doc,
         img: {
           ...confirmation.img,
-          data: confirmation.img.data.toString('base64')
-        }
+          data: confirmation.img.data.toString("base64"),
+        },
       };
     });
 
@@ -127,14 +161,13 @@ router.get("/tutor/:idtutor", async (req, res) => {
 // Endpoint para obtener documentos por idcurso
 router.get("/curso/:idcurso", async (req, res) => {
   try {
-    const paymentConfirmations = await PaymentConfirmation.find({ idcurso: req.params.idcurso });
+    const paymentConfirmations = await PaymentConfirmation.find({
+      idcurso: req.params.idcurso,
+    });
     res.status(200).json(paymentConfirmations);
   } catch (error) {
     res.status(500).send("Error al obtener los datos por idcurso");
   }
 });
-
-
-
 
 export default router;

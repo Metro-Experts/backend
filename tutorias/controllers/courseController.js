@@ -2,6 +2,8 @@ import Course from "../models/Course.js";
 import courseSchema from "../libs/validateCourse.js";
 import dotenv from "dotenv";
 import moment from "moment";
+import "moment/locale/es.js";
+moment.locale("es");
 dotenv.config();
 
 const generateDates = (startMonth, endMonth, daysOfWeek) => {
@@ -137,6 +139,11 @@ export const addStudentToCourse = async (req, res) => {
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).send("Course not found");
     const addStudentResult = await addStudent(studentId, req.params.id);
+    const removePendingResult = await removePendingStudent(
+      studentId,
+      req.params.id
+    );
+    console.log(removePendingResult);
     if (addStudentResult === "Estudiante no encontrado") {
       return res.status(404).send("Student not found");
     }
@@ -175,10 +182,10 @@ const addTutor = async (id, idTuror) => {
     console.error("An error occurred:", error);
   }
 };
-const addStudent = async (id, idTuror) => {
+const addStudent = async (id, idCurso) => {
   const url = `https://uniexpert-gateway-6569fdd60e75.herokuapp.com/users/${id}/add-course-student `;
   const body = {
-    courseId: idTuror,
+    courseId: idCurso,
   };
 
   try {
@@ -259,6 +266,34 @@ const removeStudent = async (id, courseId) => {
   try {
     const response = await fetch(url, {
       method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.log(errorBody);
+      throw new Error("Estudiante no encontrado");
+    }
+
+    const data = await response.json();
+    console.log(data);
+    return data;
+  } catch (error) {
+    console.error("An error occurred:", error);
+    return "Estudiante no encontrado";
+  }
+};
+
+const removePendingStudent = async (id, item) => {
+  const url = `https://uniexpert-gateway-6569fdd60e75.herokuapp.com/users/${id}/remove-pending`;
+  const body = { item };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
       headers: {
         "Content-Type": "application/json",
       },

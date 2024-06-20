@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 const paymentConfirmationSchema = new mongoose.Schema({
   idcurso: { type: String, required: true },
   idtutor: { type: String, required: true },
+  nombreTutoria: { type: String, required: true },
   estudiante: {
     name: { type: String, required: true },
     email: { type: String, required: true },
