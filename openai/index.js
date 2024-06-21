@@ -1,9 +1,7 @@
+require("dotenv").config();
 const OpenAI = require("openai");
 const express = require("express");
-const OPENAI_API_KEY =
-  "sk-proj-fm9o7ZWgX8bo8sM6Z2w0T3BlbkFJ3G49H3AGTOdPLlprqeki";
-
-const ASSISTANT_ID = "asst_cy0gGP7L2ZyCfK3RCoU7DS6r";
+const { OPENAI_API_KEY, ASSISTANT_ID } = process.env;
 
 // Setup Express
 const app = express();
