@@ -17,7 +17,14 @@ const userSchema = new mongoose.Schema({
     numcell: { type: String, default: "0" },
     bank: { type: String, default: "mercantil" },
   },
-  pending: [String, { default: [] }],
+  pending: [String],
+  calendar: [
+    {
+      courseId: String,
+      date: Date,
+      event: String,
+    },
+  ],
 });
 
 const User = mongoose.model("usuario", userSchema);

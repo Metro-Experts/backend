@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import dotenv from "dotenv";
 import userRoutes from "./routes/userRoutes.js";
 import cors from "cors";
+import { startNotificationService } from "./services/notificationService.js";
 
 // Cargar variables de entorno
 dotenv.config();
@@ -28,7 +29,7 @@ app.use("/users", userRoutes);
 app.get("/holaa", (req, res) => {
   res.send("Hello, World!");
 });
-
+startNotificationService();
 app.use((err, req, res) => {
   console.error(err.stack);
   res.status(500).send("Something broke!");

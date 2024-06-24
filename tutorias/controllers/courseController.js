@@ -138,17 +138,24 @@ export const addStudentToCourse = async (req, res) => {
 
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).send("Course not found");
+
     const addStudentResult = await addStudent(studentId, req.params.id);
     const removePendingResult = await removePendingStudent(
       studentId,
       req.params.id
     );
     console.log(removePendingResult);
+
     if (addStudentResult === "Estudiante no encontrado") {
       return res.status(404).send("Student not found");
     }
+
     course.students.push(studentId);
     const updatedCourse = await course.save();
+
+    // Actualizar el calendario del usuario
+    await updateUserCalendar(studentId, req.params.id, course.calendario);
+
     res.json(updatedCourse);
   } catch (error) {
     res.status(500).send(error.message);
@@ -312,5 +319,32 @@ const removePendingStudent = async (id, item) => {
   } catch (error) {
     console.error("An error occurred:", error);
     return "Estudiante no encontrado";
+  }
+};
+const updateUserCalendar = async (userId, courseId, dates) => {
+  const url = `https://uniexpert-gateway-6569fdd60e75.herokuapp.com/users/${userId}/update-calendar`;
+  const body = { courseId, dates };
+
+  try {
+    const response = await fetch(url, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (!response.ok) {
+      const errorBody = await response.text();
+      console.log(errorBody);
+      throw new Error("Failed to update user calendar");
+    }
+
+    const data = await response.json();
+    console.log("User calendar updated:", data);
+    return data;
+  } catch (error) {
+    console.error("An error occurred while updating user calendar:", error);
+    throw error;
   }
 };

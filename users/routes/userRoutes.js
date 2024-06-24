@@ -10,6 +10,7 @@ import {
   getUsersByIds,
   removePendingItem,
   updateUserById,
+  updateUserCalendar,
 } from "../controllers/userController.js";
 
 const router = express.Router();
@@ -28,5 +29,5 @@ router.post("/:id/remove-pending", removePendingItem);
 router.get("/", (req, res) => {
   res.send("Hello from users");
 });
-
+router.post("/:id/update-calendar", updateUserCalendar);
 export default router;

@@ -6,6 +6,12 @@ const bankAccountSchema = Joi.object({
   bank: Joi.string().required(),
 });
 
+const calendarEventSchema = Joi.object({
+  courseId: Joi.string().required(),
+  date: Joi.date().required(),
+  event: Joi.string().required(),
+});
+
 const userSchema = Joi.object({
   _id: Joi.string().required(),
   name: Joi.string().required(),
@@ -20,6 +26,7 @@ const userSchema = Joi.object({
   gender: Joi.string().valid("M", "F").required(),
   bankaccount: bankAccountSchema,
   pending: Joi.array().items(Joi.string()),
+  calendar: Joi.array().items(calendarEventSchema),
 });
 
 export default userSchema;

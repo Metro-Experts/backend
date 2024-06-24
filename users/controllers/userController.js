@@ -176,3 +176,38 @@ export const deleteCourseFromTutor = async (req, res) => {
     res.status(500).send(error.message);
   }
 };
+export const updateUserCalendar = async (req, res) => {
+  const { id } = req.params;
+  const { courseId, dates } = req.body;
+
+  if (!courseId || !dates || !Array.isArray(dates)) {
+    return res.status(400).send("Course ID and dates array are required");
+  }
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    // Si el usuario no tiene un calendario, inicializarlo
+    if (!user.calendar) {
+      user.calendar = [];
+    }
+
+    // Añadir las nuevas fechas al calendario del usuario
+    dates.forEach((date) => {
+      user.calendar.push({
+        courseId,
+        date: new Date(date),
+        event: `Clase del curso ${courseId}`,
+      });
+    });
+
+    // Guardar el usuario actualizado
+    const updatedUser = await user.save();
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
