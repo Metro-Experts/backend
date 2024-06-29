@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 import twilio from "twilio";
 import User from "../models/User.js";
 import cron from "node-cron";

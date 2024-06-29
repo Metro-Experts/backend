@@ -7,7 +7,9 @@ import {
   deleteCourseFromStudent,
   deleteCourseFromTutor,
   getUserById,
+  getUserRatings,
   getUsersByIds,
+  rateUser,
   removePendingItem,
   updateUserById,
   updateUserCalendar,
@@ -29,5 +31,8 @@ router.post("/:id/remove-pending", removePendingItem);
 router.get("/", (req, res) => {
   res.send("Hello from users");
 });
+
+router.post("/:id/rate", rateUser);
+router.get("/:id/ratings", getUserRatings);
 router.post("/:id/update-calendar", updateUserCalendar);
 export default router;

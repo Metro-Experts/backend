@@ -211,3 +211,78 @@ export const updateUserCalendar = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+export const rateUser = async (req, res) => {
+  const { id } = req.params;
+  const { raterId, score } = req.body;
+
+  if (!raterId || !score || score < 1 || score > 5) {
+    return res
+      .status(400)
+      .send("Se requiere un ID de calificador y una puntuación válida (1-5)");
+  }
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+
+    // Inicializar el array ratings si no existe
+    if (!user.ratings) {
+      user.ratings = [];
+    }
+
+    // Buscar si ya existe una calificación del mismo raterId
+    const existingRatingIndex = user.ratings.findIndex(
+      (rating) => rating.userId === raterId
+    );
+
+    if (existingRatingIndex !== -1) {
+      // Actualizar la calificación existente
+      user.ratings[existingRatingIndex].score = score;
+    } else {
+      // Añadir la nueva calificación
+      user.ratings.push({ userId: raterId, score });
+    }
+
+    // Calcular el nuevo promedio y contar las calificaciones
+    const sum = user.ratings.reduce((acc, curr) => acc + curr.score, 0);
+    user.rating = parseFloat((sum / user.ratings.length).toFixed(2));
+    user.ratingCount = user.ratings.length;
+
+    // Guardar los cambios
+    await user.save();
+
+    res.json({
+      message: "Calificación añadida/actualizada con éxito",
+      newRating: user.rating,
+      ratingCount: user.ratingCount,
+      ratings: user.ratings,
+    });
+  } catch (error) {
+    console.error("Error al calificar usuario:", error);
+    res
+      .status(500)
+      .send("Error interno del servidor al procesar la calificación");
+  }
+};
+
+export const getUserRatings = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).send("Usuario no encontrado");
+    }
+
+    res.json({
+      averageRating: user.rating,
+      ratingCount: user.ratingCount,
+      ratings: user.ratings,
+    });
+  } catch (error) {
+    res.status(500).send(error.message);
+  }
+};

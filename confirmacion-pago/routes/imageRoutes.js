@@ -42,7 +42,15 @@ const addPending = async (id, idCurso) => {
 
 // Endpoint para subir la imagen y datos
 router.post("/upload", upload.single("image"), async (req, res) => {
-  const { idcurso, idtutor, estudiante, nombreTutoria } = req.body;
+  const {
+    idcurso,
+    idtutor,
+    estudiante,
+    nombreTutoria,
+    referencia,
+    bancoEmisor,
+    telefono,
+  } = req.body;
   console.log(req.body);
   const estudiante1 = JSON.parse(estudiante);
 
@@ -56,6 +64,9 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       contentType: req.file.mimetype,
     },
     status: "espera",
+    referencia,
+    bancoEmisor,
+    telefono,
   });
 
   try {
@@ -67,7 +78,7 @@ router.post("/upload", upload.single("image"), async (req, res) => {
       id: newPaymentConfirmation._id,
     });
   } catch (error) {
-    /* console.log(error); */
+    console.log(error);
     res.status(500).send("Error al guardar los datos y la imagen");
   }
 });

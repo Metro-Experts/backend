@@ -15,6 +15,9 @@ const paymentConfirmationSchema = new mongoose.Schema({
     data: Buffer,
     contentType: String,
   },
+  referencia: { type: String, required: true },
+  bancoEmisor: { type: String, required: true },
+  telefono: { type: String, required: true },
 });
 
 export default mongoose.model("PaymentConfirmation", paymentConfirmationSchema);

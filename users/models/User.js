@@ -10,8 +10,7 @@ const userSchema = new mongoose.Schema({
   cellphone: String,
   courses_student: [String],
   courses_tutor: [String],
-  rating: { type: Number, default: 0 },
-  ratingCount: { type: Number, default: 0 },
+
   bankaccount: {
     cedula: { type: String, default: 0 },
     numcell: { type: String, default: "0" },
@@ -25,6 +24,35 @@ const userSchema = new mongoose.Schema({
       event: String,
     },
   ],
+  carrer: String,
+  description: String,
+  rating: { type: Number, default: 0 },
+  ratingCount: { type: Number, default: 0 },
+  ratings: [
+    {
+      userId: String,
+      score: Number,
+    },
+  ],
+});
+
+userSchema.methods.calculateAverageRating = function () {
+  if (this.ratings.length === 0) {
+    this.rating = 0;
+    this.ratingCount = 0;
+  } else {
+    const sum = this.ratings.reduce((acc, curr) => acc + curr.score, 0);
+    this.rating = parseFloat((sum / this.ratings.length).toFixed(2));
+    this.ratingCount = this.ratings.length;
+  }
+};
+
+// Middleware para actualizar el rating antes de guardar
+userSchema.pre("save", function (next) {
+  if (this.isModified("ratings")) {
+    this.calculateAverageRating();
+  }
+  next();
 });
 
 const User = mongoose.model("usuario", userSchema);
