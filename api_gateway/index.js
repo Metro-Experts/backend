@@ -13,7 +13,7 @@ const subjectsEndpoints =
 
 const paymentsEndpoints = process.env.PAYMENT || "http://localhost:3003/images";
 const conversionMonetaria = process.env.DOLAR || "http://localhost:3004/dolar";
-
+const assistantEndpoint = process.env.ASSISTANT || "http://localhost:3005";
 app.use(
   "/users",
   createProxyMiddleware({
@@ -68,7 +68,16 @@ app.use(
     },
   })
 );
-
+app.use(
+  "/assistant",
+  createProxyMiddleware({
+    target: assistantEndpoint,
+    changeOrigin: true,
+    pathRewrite: {
+      "^/assistant": "",
+    },
+  })
+);
 app.get("/", (req, res) => {
   res.send("API Gateway");
 });
