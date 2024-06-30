@@ -15,6 +15,8 @@ const courseSchema = Joi.object({
     rating: Joi.number().min(0).max(5).required(),
     id: Joi.string().required(),
     bankaccount: bankAccountSchema,
+    email: Joi.string(),
+    description: Joi.string(),
   }).required(),
   date: Joi.array()
     .items(

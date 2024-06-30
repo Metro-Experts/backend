@@ -3,8 +3,25 @@ import courseSchema from "../libs/validateCourse.js";
 import dotenv from "dotenv";
 import moment from "moment";
 import "moment/locale/es.js";
+
 moment.locale("es");
 dotenv.config();
+
+const fetchTutorData = async (tutorId) => {
+  const gatewayUrl = "https://uniexpert-gateway-6569fdd60e75.herokuapp.com";
+  const url = `${gatewayUrl}/users/${tutorId}`;
+
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching tutor data:", error);
+    throw error;
+  }
+};
 
 const generateDates = (startMonth, endMonth, daysOfWeek) => {
   const dates = [];
@@ -67,28 +84,42 @@ export const createCourse = async (req, res) => {
   }
 
   try {
-    const studentExists = await consultarId(req.body.tutor.id);
-    console.log(studentExists);
-    if (!studentExists) {
+    const tutorId = req.body.tutor.id;
+    const tutorData = await fetchTutorData(tutorId);
+
+    if (!tutorData) {
       return res.status(404).send("Tutor not found");
     }
 
     // Generar el calendario de fechas
-    const daysOfWeek = req.body.date.map((d) => d.day); // Asume que "day" tiene nombres de días como "Monday", "Tuesday", etc.
+    const daysOfWeek = req.body.date.map((d) => d.day);
     const calendario = generateDates(
       req.body.inicio,
       req.body.final,
       daysOfWeek
     );
-
-    // Agregar el calendario al cuerpo de la solicitud
-    const newCourseData = { ...req.body, calendario };
+    console.log(tutorData.email);
+    const newCourseData = {
+      ...req.body,
+      calendario,
+      tutor: {
+        name: tutorData.name,
+        lastName: tutorData.lastName,
+        rating: tutorData.rating,
+        id: tutorData._id,
+        bankaccount: tutorData.bankaccount,
+        email: tutorData.email,
+        description: tutorData.description,
+      },
+    };
 
     const newCourse = new Course(newCourseData);
     const savedCourse = await newCourse.save();
+
     console.log(savedCourse.tutor.id);
     console.log(savedCourse._id.toString());
-    addTutor(savedCourse.tutor.id, savedCourse._id.toString());
+    await addTutor(savedCourse.tutor.id, savedCourse._id.toString());
+
     res.status(201).json(savedCourse);
   } catch (error) {
     res.status(500).send(error.message);

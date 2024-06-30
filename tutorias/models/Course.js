@@ -8,6 +8,8 @@ const courseSchema = new mongoose.Schema({
     lastName: { type: String, required: true },
     rating: { type: Number, required: true, min: 0, max: 5 },
     id: { type: String, required: true },
+    email: { type: String, default: "NA" },
+    description: { type: String, default: "NA" },
     bankaccount: {
       cedula: { type: String, default: 0 },
       numcell: { type: String, default: "0" },
