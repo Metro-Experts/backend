@@ -23,6 +23,21 @@ const fetchTutorData = async (tutorId) => {
   }
 };
 
+export const getCoursesByTutorId = async (req, res) => {
+  const { tutorId } = req.params;
+
+  try {
+    const courses = await Course.find({ "tutor.id": tutorId });
+    if (courses.length === 0) {
+      return res.status(404).send("No se encontraron cursos para este tutor");
+    }
+    res.json(courses);
+  } catch (error) {
+    console.error("Error al obtener cursos del tutor:", error);
+    res.status(500).send("Error interno del servidor");
+  }
+};
+
 export const updateTutorCourses = async (req, res) => {
   const { tutorId } = req.params;
   const updatedFields = req.body;

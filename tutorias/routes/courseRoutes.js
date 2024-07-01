@@ -8,6 +8,7 @@ import {
   removeStudentFromCourse,
   getCoursesByIds,
   updateTutorCourses,
+  getCoursesByTutorId,
 } from "../controllers/courseController.js";
 
 const router = express.Router();
@@ -20,6 +21,7 @@ router.post("/:id/add-student", addStudentToCourse);
 router.post("/:id/remove-student", removeStudentFromCourse);
 router.post("/get-by-ids", getCoursesByIds);
 router.put("/update-tutor-courses/:tutorId", updateTutorCourses);
+router.get("/tutor/:tutorId", getCoursesByTutorId);
 router.get("/", (req, res) => {
   res.send("Hello from courses");
 });
