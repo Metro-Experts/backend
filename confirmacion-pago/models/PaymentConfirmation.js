@@ -12,6 +12,7 @@ const paymentConfirmationSchema = new mongoose.Schema({
   },
   status: { type: String, default: "espera" },
   img: {
+    // eslint-disable-next-line no-undef
     data: Buffer,
     contentType: String,
   },

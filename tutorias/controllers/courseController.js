@@ -23,6 +23,34 @@ const fetchTutorData = async (tutorId) => {
   }
 };
 
+export const updateTutorCourses = async (req, res) => {
+  const { tutorId } = req.params;
+  const updatedFields = req.body;
+  console.log(tutorId, updatedFields);
+
+  try {
+    const result = await Course.updateMany(
+      { "tutor.id": tutorId },
+      {
+        $set: {
+          "tutor.name": updatedFields.name,
+          "tutor.lastName": updatedFields.lastName,
+          "tutor.rating": updatedFields.rating,
+        },
+      }
+    );
+
+    if (result.nModified === 0) {
+      return res.status(404).send("No se encontraron cursos para actualizar");
+    }
+
+    res.json({ message: "Cursos actualizados exitosamente" });
+  } catch (error) {
+    console.error("Error updating tutor courses:", error);
+    res.status(500).send("Error actualizando los cursos del tutor");
+  }
+};
+
 const generateDates = (startMonth, endMonth, daysOfWeek) => {
   const dates = [];
   let startDate = moment(startMonth, "MMMM");
@@ -110,6 +138,7 @@ export const createCourse = async (req, res) => {
         bankaccount: tutorData.bankaccount,
         email: tutorData.email,
         description: tutorData.description,
+        carrer: tutorData.carrer,
       },
     };
 

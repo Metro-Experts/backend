@@ -14,6 +14,30 @@ export const getUserById = async (req, res) => {
   }
 };
 
+const updateTutorCourses = async (tutorId, updatedFields) => {
+  const courseServiceUrl =
+    "https://uniexpert-gateway-6569fdd60e75.herokuapp.com";
+  const url = `${courseServiceUrl}/courses/update-tutor-courses/${tutorId}`;
+
+  try {
+    const response = await fetch(url, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedFields),
+    });
+    console.log("Response:", response);
+    if (!response.ok) {
+      throw new Error(`Error updating tutor courses: ${response.statusText}`);
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error updating tutor courses:", error);
+  }
+};
+
 // Actualizar un usuario por ID
 export const updateUserById = async (req, res) => {
   try {
@@ -228,31 +252,33 @@ export const rateUser = async (req, res) => {
       return res.status(404).send("Usuario no encontrado");
     }
 
-    // Inicializar el array ratings si no existe
     if (!user.ratings) {
       user.ratings = [];
     }
 
-    // Buscar si ya existe una calificación del mismo raterId
     const existingRatingIndex = user.ratings.findIndex(
       (rating) => rating.userId === raterId
     );
 
     if (existingRatingIndex !== -1) {
-      // Actualizar la calificación existente
       user.ratings[existingRatingIndex].score = score;
     } else {
-      // Añadir la nueva calificación
       user.ratings.push({ userId: raterId, score });
     }
 
-    // Calcular el nuevo promedio y contar las calificaciones
     const sum = user.ratings.reduce((acc, curr) => acc + curr.score, 0);
     user.rating = parseFloat((sum / user.ratings.length).toFixed(2));
     user.ratingCount = user.ratings.length;
 
-    // Guardar los cambios
     await user.save();
+
+    // Actualizar los cursos del tutor con el nuevo rating, name y lastName
+    const updatedFields = {
+      rating: user.rating,
+      name: user.name,
+      lastName: user.lastName,
+    };
+    await updateTutorCourses(user._id, updatedFields);
 
     res.json({
       message: "Calificación añadida/actualizada con éxito",

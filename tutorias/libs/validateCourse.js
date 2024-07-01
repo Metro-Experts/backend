@@ -17,6 +17,7 @@ const courseSchema = Joi.object({
     bankaccount: bankAccountSchema,
     email: Joi.string(),
     description: Joi.string(),
+    carrer: Joi.string(),
   }).required(),
   date: Joi.array()
     .items(

@@ -45,52 +45,62 @@ async function runAssistant(threadId) {
 }
 
 async function checkingStatus(res, threadId, runId) {
-  const runObject = await openai.beta.threads.runs.retrieve(threadId, runId);
+  try {
+    const runObject = await openai.beta.threads.runs.retrieve(threadId, runId);
+    const status = runObject.status;
+    console.log(runObject);
+    console.log("Current status: " + status);
 
-  const status = runObject.status;
-  console.log(runObject);
-  console.log("Current status: " + status);
+    if (status == "completed") {
+      clearInterval(pollingInterval);
 
-  if (status == "completed") {
-    clearInterval(pollingInterval);
+      const messagesList = await openai.beta.threads.messages.list(threadId);
+      let messages = [];
 
-    const messagesList = await openai.beta.threads.messages.list(threadId);
-    let messages = [];
+      messagesList.body.data.forEach((message) => {
+        messages.push(message.content);
+      });
 
-    messagesList.body.data.forEach((message) => {
-      messages.push(message.content);
-    });
-
-    res.json({ messages });
+      res.json({ messages });
+    }
+  } catch (error) {
+    console.error("Error retrieving status:", error);
+    res.status(500).json({ error: "An error occurred while checking status" });
   }
 }
-
-//=========================================================
-//============== ROUTE SERVER =============================
-//=========================================================
-
-// Open a new thread
+//hola
 app.get("/thread", (req, res) => {
-  createThread().then((thread) => {
-    res.json({ threadId: thread.id });
-  });
+  createThread()
+    .then((thread) => {
+      res.json({ threadId: thread.id });
+    })
+    .catch((error) => {
+      console.error("Error creating thread:", error);
+      res
+        .status(500)
+        .json({ error: "An error occurred while creating thread" });
+    });
 });
 
-app.post("/message", (req, res) => {
+app.post("/message", async (req, res) => {
   const { message, threadId } = req.body;
-  addMessage(threadId, message).then((message) => {
-    // res.json({ messageId: message.id });
+  if (!message || !threadId) {
+    return res.status(400).json({ error: "Missing message or threadId" });
+  }
+  console.log("Received message:", message);
+  console.log("Thread ID:", threadId);
+  try {
+    const addedMessage = await addMessage(threadId, message);
+    const run = await runAssistant(threadId);
+    const runId = run.id;
 
-    // Run the assistant
-    runAssistant(threadId).then((run) => {
-      const runId = run.id;
-
-      // Check the status
-      pollingInterval = setInterval(() => {
-        checkingStatus(res, threadId, runId);
-      }, 5000);
-    });
-  });
+    pollingInterval = setInterval(() => {
+      checkingStatus(res, threadId, runId);
+    }, 2000); // Check every 2 seconds
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: "An error occurred" });
+  }
 });
 
 // Start the server

@@ -1,4 +1,3 @@
-// server.js
 import express from "express";
 import mongoose from "mongoose";
 import bodyParser from "body-parser";
@@ -20,7 +19,8 @@ mongoose
   .catch((error) => console.error(error));
 
 // Middleware
-app.use(bodyParser.json());
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 // Rutas
 app.use("/images", imageRoutes);
